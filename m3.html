@@ -1,0 +1,235 @@
+<!DOCTYPE html> 
+<html> 
+<head> 
+	<meta charset="utf-8"> 
+	<meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1"> 
+	<title>jQuery Mobile: Maqueta Tucasa.com</title> 
+	<link rel="stylesheet"  href="http://code.jquery.com/mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.css" /> 
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/docs/_assets/css/jqm-docs.css" /> 
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.5.min.js"></script>
+	
+	<script type="text/javascript">
+	  $(document).bind("mobileinit",function(){
+			$.mobile.selectmenu.prototype.options.nativeMenu = true;
+			$.mobile.pageLoadErrorMessage = "Error al cargar la página";
+			$.mobile.loadingMessage = "Cargando";
+		});
+	</script> 
+	<script type="text/javascript" src="http://code.jquery.com/mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.js"></script> 
+	<script type="text/javascript" src="http://code.jquery.com/mobile/experiments/themeswitcher/jquery.mobile.themeswitcher.js"></script> 
+	<script type="text/javascript" src="http://code.jquery.com/mobile/docs/_assets/js/jqm-docs.js"></script> 
+
+	<script>
+	$(document).ready(function(){
+		
+		$('select#idz').change(function(){
+			$.mobile.pageLoading();
+			var idz=$(this).val()
+			var poblaciones = $('select#comarca')
+			$.get('http://desarrollo.tucasa.com/desplegableszonas.asp', { idz: idz },function(data){
+					data='<option>Todas</option>'+data;poblaciones.html(data);$.mobile.pageLoading(true);
+					poblaciones.selectmenu('refresh');
+					$('select#idz').focus();
+					},"html");			
+		});
+		
+		$('#btnBuscarOfertas').click(function(){
+		
+		var comarcaV = $('#comarca').val();
+		var comarca = document.getElementById("comarca");
+		
+		var idz = document.getElementById("idz");
+		
+		idz.options[idz.selectedIndex].value = comarca.options[comarca.selectedIndex].value;
+		
+		
+		$('#comarca').attr('disabled',true);
+		$('#btnBuscarOfertas').attr('disabled',true);
+		$('#formulario').submit();
+		
+		
+		//alert(comarca);
+		//return false;
+		});
+		
+	});
+	</script>
+	
+	
+	
+</head> 
+<body onload=""> 
+<div data-role="page" data-theme="b" id="jqm-home"> 	
+	<div data-role="header" >
+		<h1 id="jqm-logo"><img src="http://www.tucasa.com/img/logo-tucasa-detalle.jpg" alt="jQuery Mobile Framework" /></h1> 
+	</div>	
+	<div data-role="content"> 
+		<form  data-ajax="false" class="formlistado" id="formularioSearch" name="formularioSearch" action="/m/r3.html" method="get" >
+			<div data-role="fieldcontain">
+				<input type="hidden" name="r" value="" id="r">
+				
+				<label for="search">Buscar:</label>
+				<input type="search" name="q" id="search" value="" type="text" x-webkit-speech />
+
+				<input type="submit" value="Buscar" data-inline="true">
+			</div>
+		</form>
+
+		<form  data-ajax="false" class="formlistado" id="formulario" name="formulario" action="/m/r3.html" method="get" >
+			<input type="hidden" name="r" value="" id="r">
+			
+			
+			<div class="par" data-role="fieldcontain">
+				<label for="ges" class="FontBig">Gestión:</label>
+				<select id="ges" name="ges">
+					<option class="" value="2" selected="selected">Compra-Venta</option>			
+					<option class="" value="1">Alquiler</option>
+					<option class="viviendas" value="33">Alquiler larga duración</option>
+					<option class="viviendas" value="3">Alquiler con opción a compra</option>
+					<option class="viviendas" value="9">Alquiler vacaciones</option>
+					<option class="viviendas" value="17">Alquiler habitaciones / compartido</option>
+				</select>
+			</div>
+			<div class="par" data-role="fieldcontain" data-transition="slide">
+				<label for="v" class="FontBig">Tipo:</label>
+				<select id="v" name="v" data-transition="slide">			
+					<option class="" value="99" selected="selected" data-transition="slide">Viviendas</option>			
+					<option class="viviendas" value="5" data-transition="slide">Casas y Chalets</option>			
+					<option class="viviendas" value="1">Pisos y Apartamentos</option>		
+					<option class="viviendas" value="2">Áticos</option>			
+					<option class="viviendas" value="3">Dúplex</option>			
+					<option class="viviendas" value="4">Estudios y Lofts</option>			
+					<option class="viviendas" value="12">Viviendas planta baja</option>			
+					<option class="" value="11" id="obraNueva">Obra Nueva</option>			
+					<option class="" value="6">Oficinas</option>
+					<option class="" value="7">Locales comerciales</option>			
+					<option class="" value="8">Garajes</option>			
+					<option class="" value="9">Terrenos</option>			
+					<option class="" value="10">Naves</option>
+					<option class="" value="13">Trasteros</option>			
+				</select>
+			</div>
+			<!--<ul class="par" data-role="listview" data-transition="slide">
+				<li><a href="#tipo-inmueble" >Tipo Inmueble:</a></li>
+			    <li><a href="#resultados">Ir a prueba de resultados</a></li>
+			</ul>-->
+			<div class="par" data-role="fieldcontain">
+				<input type="hidden" name="ZonaPagina" id="ZonaPagina" value="0024" disabled="disabled">
+				<label for="idz" class="FontBig">Provincia:</label>
+				<select id="idz" name="idz" class="ComboZonas">
+					<option value="0015">A Coruña</option> <option value="0001">Álava</option><option value="0002">Albacete</option><option value="0003">Alicante</option> 			 						<option value="0004">Almería</option> 			 						<option value="0033">Asturias</option> 			 						<option value="0005">Ávila</option> 			 						<option value="0006">Badajoz</option> 			 						<option value="0007">Baleares</option> 			 						<option value="0008">Barcelona</option> 			 						<option value="0009">Burgos</option> 			 						<option value="0010">Cáceres</option> 			 						<option value="0011">Cádiz</option> 			 						<option value="0039">Cantabria</option> 			 						<option value="0012">Castellón</option> 			 						<option value="0051">Ceuta</option> 			 						<option value="0013">Ciudad Real</option> 			 						<option value="0014">Córdoba</option> 			 						<option value="0016">Cuenca</option> 			 						<option value="0017">Girona</option> 			 						<option value="0018">Granada</option> 			 						<option value="0019">Guadalajara</option> 			 						<option value="0020">Guipuzcoa</option> 			 						<option value="0021">Huelva</option> 			 						<option value="0022">Huesca</option> 			 						<option value="0023">Jaén</option> 			 						<option value="0026">La Rioja</option> 			 						<option value="0035">Las Palmas</option> 			 						<option value="0024" selected="selected">León</option> 			 						<option value="0025">Lleida</option> 			 						<option value="0027">Lugo</option> 			 						<option value="0028">Madrid</option> 			 						<option value="0029">Málaga</option> 			 						<option value="0052">Melilla</option> 			 						<option value="0030">Murcia</option> 			 						<option value="0031">Navarra</option> 			 						<option value="0032">Ourense</option> 			 						<option value="0034">Palencia</option> 			 						<option value="0036">Pontevedra</option> 			 						<option value="0038">S.C. Tenerife</option> 			 						<option value="0037">Salamanca</option> 			 						<option value="0040">Segovia</option> 			 						<option value="0041">Sevilla</option> 			 						<option value="0042">Soria</option> 			 						<option value="0043">Tarragona</option> 			 						<option value="0044">Teruel</option> 			 						<option value="0045">Toledo</option> 			 						<option value="0046">Valencia</option> 			 						<option value="0047">Valladolid</option> 			 						<option value="0048">Vizcaya</option> 			 						<option value="0049">Zamora</option> 			 						<option value="0050">Zaragoza</option>
+				</select>
+			</div>
+		
+			<div class="par" id="DivComarca" data-role="fieldcontain">
+			<label for="comarca" class="FontBig">Población:</label>
+				<select id="comarca" name="comarca" class="ComboZonas">
+					<option value="">Todas</option> <option value="0024.0001.9999.0001">León Capital</option><option value="0024.9999.9999.0001">Acebedo</option><option value="0024.9999.9999.0002">Algadefe</option><option value="0024.9999.9999.0003">Alija del Infantado</option><option value="0024.9999.9999.0004">Almanza</option><option value="0024.9999.9999.0005">Antigua (La)</option><option value="0024.9999.9999.0006">Ardón</option><option value="0024.9999.9999.0007">Arganza</option><option value="0024.9999.9999.0008">Astorga</option><option value="0024.9999.9999.0009">Balboa</option><option value="0024.9999.9999.0010">Bañeza (La)</option><option value="0024.9999.9999.0011">Barjas</option><option value="0024.9999.9999.0012">Barrios de Luna (Los)</option><option value="0024.9999.9999.0013">Bembibre</option><option value="0024.9999.9999.0014">Benavides</option><option value="0024.9999.9999.0015">Benuza</option><option value="0024.9999.9999.0016">Bercianos del Páramo</option><option value="0024.9999.9999.0017">Bercianos del Real Camino</option><option value="0024.9999.9999.0018">Berlanga del Bierzo</option><option value="0024.9999.9999.0019">Boca de Huérgano</option><option value="0024.9999.9999.0020">Boñar</option><option value="0024.9999.9999.0021">Borrenes</option><option value="0024.9999.9999.0022">Brazuelo</option><option value="0024.9999.9999.0023">Burgo Ranero (El)</option><option value="0024.9999.9999.0024">Burón</option><option value="0024.9999.9999.0025">Bustillo del Páramo</option><option value="0024.9999.9999.0026">Cabañas Raras</option><option value="0024.9999.9999.0027">Cabreros del Río</option><option value="0024.9999.9999.0028">Cabrillanes</option><option value="0024.9999.9999.0029">Cacabelos</option><option value="0024.9999.9999.0030">Calzada del Coto</option><option value="0024.9999.9999.0031">Campazas</option><option value="0024.9999.9999.0032">Campo de Villavidel</option><option value="0024.9999.9999.0033">Camponaraya</option><option value="0024.9999.9999.0034">Candín</option><option value="0024.9999.9999.0035">Cármenes</option><option value="0024.9999.9999.0036">Carracedelo</option><option value="0024.9999.9999.0037">Carrizo</option><option value="0024.9999.9999.0038">Carrocera</option><option value="0024.9999.9999.0039">Carucedo</option><option value="0024.9999.9999.0040">Castilfalé</option><option value="0024.9999.9999.0041">Castrillo de Cabrera</option><option value="0024.9999.9999.0042">Castrillo de la Valduerna</option><option value="0024.9999.9999.0043">Castrocalbón</option><option value="0024.9999.9999.0044">Castrocontrigo</option><option value="0024.9999.9999.0045">Castropodame</option><option value="0024.9999.9999.0046">Castrotierra de Valmadrigal</option><option value="0024.9999.9999.0047">Cea</option><option value="0024.9999.9999.0048">Cebanico</option><option value="0024.9999.9999.0049">Cebrones del Río</option><option value="0024.9999.9999.0061">Chozas de Abajo</option><option value="0024.9999.9999.0050">Cimanes de la Vega</option><option value="0024.9999.9999.0051">Cimanes del Tejar</option><option value="0024.9999.9999.0212">Ciñera</option><option value="0024.9999.9999.0052">Cistierna</option><option value="0024.9999.9999.0053">Congosto</option><option value="0024.9999.9999.0054">Corbillos de los Oteros</option><option value="0024.9999.9999.0055">Corullón</option><option value="0024.9999.9999.0056">Crémenes</option><option value="0024.9999.9999.0057">Cuadros</option><option value="0024.9999.9999.0058">Cubillas de los Oteros</option><option value="0024.9999.9999.0059">Cubillas de Rueda</option><option value="0024.9999.9999.0060">Cubillos del Sil</option><option value="0024.9999.9999.0062">Destriana</option><option value="0024.9999.9999.0063">Encinedo</option><option value="0024.9999.9999.0064">Ercina (La)</option><option value="0024.9999.9999.0065">Escobar de Campos</option><option value="0024.9999.9999.0066">Fabero</option><option value="0024.9999.9999.0067">Folgoso de la Ribera</option><option value="0024.9999.9999.0068">Fresno de la Vega</option><option value="0024.9999.9999.0069">Fuentes de Carbajal</option><option value="0024.9999.9999.0070">Garrafe de Torío</option><option value="0024.9999.9999.0071">Gordaliza del Pino</option><option value="0024.9999.9999.0072">Gordoncillo</option><option value="0024.9999.9999.0073">Gradefes</option><option value="0024.9999.9999.0074">Grajal de Campos</option><option value="0024.9999.9999.0075">Gusendo de los Oteros</option><option value="0024.9999.9999.0076">Hospital de Órbigo</option><option value="0024.9999.9999.0077">Igüeña</option><option value="0024.9999.9999.0078">Izagre</option><option value="0024.9999.9999.0079">Joarilla de las Matas</option><option value="0024.9999.9999.0080">Laguna Dalga</option><option value="0024.9999.9999.0081">Laguna de Negrillos</option><option value="0024.9999.9999.0084">Llamas de la Ribera</option><option value="0024.9999.9999.0082">Lucillo</option><option value="0024.9999.9999.0083">Luyego</option><option value="0024.9999.9999.0085">Magaz de Cepeda</option><option value="0024.9999.9999.0086">Mansilla de las Mulas</option><option value="0024.9999.9999.0087">Mansilla Mayor</option><option value="0024.9999.9999.0088">Maraña</option><option value="0024.9999.9999.0089">Matadeón de los Oteros</option><option value="0024.9999.9999.0090">Matallana de Torío</option><option value="0024.9999.9999.0092">Molinaseca</option><option value="0024.9999.9999.0093">Murias de Paredes</option><option value="0024.9999.9999.0095">Oencia</option><option value="0024.9999.9999.0096">Omañas (Las)</option><option value="0024.9999.9999.0097">Onzonilla</option><option value="0024.9999.9999.0098">Oseja de Sajambre</option><option value="0024.9999.9999.0099">Pajares de los Oteros</option><option value="0024.9999.9999.0100">Palacios de la Valduerna</option><option value="0024.9999.9999.0101">Palacios del Sil</option><option value="0024.9999.9999.0102">Páramo del Sil</option><option value="0024.9999.9999.0103">Peranzanes</option><option value="0024.9999.9999.0104">Pobladura de Pelayo García</option><option value="0024.9999.9999.0105">Pola de Gordón (La)</option><option value="0024.9999.9999.0106">Ponferrada</option><option value="0024.9999.9999.0107">Posada de Valdeón</option><option value="0024.9999.9999.0108">Pozuelo del Páramo</option><option value="0024.9999.9999.0109">Prado de la Guzpeña</option><option value="0024.9999.9999.0110">Priaranza del Bierzo</option><option value="0024.9999.9999.0111">Prioro</option><option value="0024.9999.9999.0112">Puebla de Lillo</option><option value="0024.9999.9999.0113">Puente de Domingo Flórez</option><option value="0024.9999.9999.0114">Quintana del Castillo</option><option value="0024.9999.9999.0115">Quintana del Marco</option><option value="0024.9999.9999.0116">Quintana y Congosto</option><option value="0024.9999.9999.0117">Regueras de Arriba</option><option value="0024.9999.9999.0118">Reyero</option><option value="0024.9999.9999.0119">Riaño</option><option value="0024.9999.9999.0120">Riego de la Vega</option><option value="0024.9999.9999.0121">Riello</option><option value="0024.9999.9999.0122">Rioseco de Tapia</option><option value="0024.9999.9999.0123">Robla (La)</option><option value="0024.9999.9999.0124">Roperuelos del Páramo</option><option value="0024.9999.9999.0125">Sabero</option><option value="0024.9999.9999.0126">Sahagún</option><option value="0024.9999.9999.0127">San Adrián del Valle</option><option value="0024.9999.9999.0128">San Andrés del Rabanedo</option><option value="0024.9999.9999.0130">San Cristóbal de la Polantera</option><option value="0024.9999.9999.0131">San Emiliano</option><option value="0024.9999.9999.0132">San Esteban de Nogales</option><option value="0024.9999.9999.0133">San Justo de la Vega</option><option value="0024.9999.9999.0134">San Millán de los Caballeros</option><option value="0024.9999.9999.0135">San Pedro Bercianos</option><option value="0024.9999.9999.0129">Sancedo</option><option value="0024.9999.9999.0136">Santa Colomba de Curueño</option><option value="0024.9999.9999.0137">Santa Colomba de Somoza</option><option value="0024.9999.9999.0138">Santa Cristina de Valmadrigal</option><option value="0024.9999.9999.0139">Santa Elena de Jamuz</option><option value="0024.9999.9999.0140">Santa María de la Isla</option><option value="0024.9999.9999.0143">Santa María de Ordás</option><option value="0024.9999.9999.0141">Santa María del Monte Cea</option><option value="0024.9999.9999.0142">Santa María del Páramo</option><option value="0024.9999.9999.0144">Santa Marina del Rey</option><option value="0024.9999.9999.0145">Santas Martas</option><option value="0024.9999.9999.0146">Santiago Millas</option><option value="0024.9999.9999.0213">Santo Tomás de las Ollas</option><option value="0024.9999.9999.0147">Santovenia de la Valdoncina</option><option value="0024.9999.9999.0148">Sariegos</option><option value="0024.9999.9999.0149">Sena de Luna</option><option value="0024.9999.9999.0150">Sobrado</option><option value="0024.9999.9999.0151">Soto de la Vega</option><option value="0024.9999.9999.0152">Soto y Amío</option><option value="0024.9999.9999.0153">Toral de los Guzmanes</option><option value="0024.9999.9999.0154">Toreno</option><option value="0024.9999.9999.0155">Torre del Bierzo</option><option value="0024.9999.9999.0156">Trabadelo</option><option value="0024.9999.9999.0157">Truchas</option><option value="0024.9999.9999.0158">Turcia</option><option value="0024.9999.9999.0159">Urdiales del Páramo</option><option value="0024.9999.9999.0170">Val de San Lorenzo</option><option value="0024.9999.9999.0160">Valdefresno</option><option value="0024.9999.9999.0161">Valdefuentes del Páramo</option><option value="0024.9999.9999.0162">Valdelugueros</option><option value="0024.9999.9999.0163">Valdemora</option><option value="0024.9999.9999.0164">Valdepiélago</option><option value="0024.9999.9999.0165">Valdepolo</option><option value="0024.9999.9999.0166">Valderas</option><option value="0024.9999.9999.0167">Valderrey</option><option value="0024.9999.9999.0168">Valderrueda</option><option value="0024.9999.9999.0169">Valdesamario</option><option value="0024.9999.9999.0171">Valdevimbre</option><option value="0024.9999.9999.0172">Valencia de Don Juan</option><option value="0024.9999.9999.0175">Vallecillo</option><option value="0024.9999.9999.0173">Valverde de la Virgen</option><option value="0024.9999.9999.0174">Valverde-Enrique</option><option value="0024.9999.9999.0176">Vecilla (La)</option><option value="0024.9999.9999.0178">Vega de Espinareda</option><option value="0024.9999.9999.0179">Vega de Infanzones</option><option value="0024.9999.9999.0180">Vega de Valcarce</option><option value="0024.9999.9999.0177">Vegacervera</option><option value="0024.9999.9999.0181">Vegaquemada</option><option value="0024.9999.9999.0182">Vegas del Condado</option><option value="0024.9999.9999.0183">Villablino</option><option value="0024.9999.9999.0184">Villabraz</option><option value="0024.9999.9999.0185">Villadangos del Páramo</option><option value="0024.9999.9999.0186">Villadecanes</option><option value="0024.9999.9999.0187">Villademor de la Vega</option><option value="0024.9999.9999.0188">Villafranca del Bierzo</option><option value="0024.9999.9999.0189">Villagatón</option><option value="0024.9999.9999.0190">Villamandos</option><option value="0024.9999.9999.0209">Villamanín</option><option value="0024.9999.9999.0191">Villamañán</option><option value="0024.9999.9999.0192">Villamartín de Don Sancho</option><option value="0024.9999.9999.0193">Villamejil</option><option value="0024.9999.9999.0194">Villamol</option><option value="0024.9999.9999.0195">Villamontán de la Valduerna</option><option value="0024.9999.9999.0196">Villamoratiel de las Matas</option><option value="0024.9999.9999.0197">Villanueva de las Manzanas</option><option value="0024.9999.9999.0214">Villaobispo de las Regueras</option><option value="0024.9999.9999.0198">Villaobispo de Otero</option><option value="0024.9999.9999.0210">Villaornate y Castro</option><option value="0024.9999.9999.0199">Villaquejida</option><option value="0024.9999.9999.0200">Villaquilambre</option><option value="0024.9999.9999.0201">Villarejo de Órbigo</option><option value="0024.9999.9999.0202">Villares de Órbigo</option><option value="0024.9999.9999.0203">Villasabariego</option><option value="0024.9999.9999.0204">Villaselán</option><option value="0024.9999.9999.0205">Villaturiel</option><option value="0024.9999.9999.0206">Villazala</option><option value="0024.9999.9999.0207">Villazanzo de Valderaduey</option><option value="0024.9999.9999.0211">Virgen del Camino, (La)</option><option value="0024.9999.9999.0208">Zotes del Páramo</option>
+				</select>
+				
+				<script type="text/javascript">
+					indice = document.getElementById("comarca").selectedIndex;
+					PoblSelec = document.getElementById("comarca").options[indice].text;
+				</script>
+			</div>
+			<!--<div data-role="fieldcontain">
+				<label for="p3">Precio hasta:</label>
+				<input type="range" name="p3" id="p3" value="10000000" min="0" max="10000000" data-theme="a"/>
+			</div>-->
+		
+		
+		
+		
+		
+			<div class="par">
+				<div class="parduo">
+				<label  for="p1" class="FontBig">Precio:</label>
+				<select id="p1" name="p1">
+						<option value="0">Desde</option> 			 					<option value="30">30 €</option> 			 					<option value="50">50 €</option> 			 					<option value="80">80 €</option> 			 					<option value="100">100 €</option> 			 					<option value="150">150 €</option> 			 					<option value="200">200 €</option> 			 					<option value="400">400 €</option> 			 					<option value="500">500 €</option> 			 					<option value="600">600 €</option> 			 					<option value="700">700 €</option> 			 					<option value="800">800 €</option> 			 					<option value="900">900 €</option> 			 					<option value="1000">1.000 €</option> 			 					<option value="1200">1.200 €</option> 			 					<option value="1400">1.400 €</option> 			 					<option value="2000">2.000 €</option> 			 					<option value="100000">100.000 €</option> 			 					<option value="150000">150.000 €</option> 			 					<option value="200000">200.000 €</option> 			 					<option value="250000">250.000 €</option> 			 					<option value="300000">300.000 €</option> 			 					<option value="350000">350.000 €</option> 			 					<option value="400000">400.000 €</option> 			 					<option value="1000000">1.000.000 €</option> 			
+				</select>
+				</div>
+			
+				<div class="parduo">
+					<label for="p2" class="FontBig">... hasta</label>
+					<select id="p2" name="p2">
+						<option value="0">Hasta</option> 			 					<option value="30">30 €</option> 			 					<option value="50">50 €</option> 			 					<option value="80">80 €</option> 			 					<option value="100">100 €</option> 			 					<option value="150">150 €</option> 			 					<option value="200">200 €</option> 			 					<option value="400">400 €</option> 			 					<option value="500">500 €</option> 			 					<option value="600">600 €</option> 			 					<option value="700">700 €</option> 			 					<option value="800">800 €</option> 			 					<option value="900">900 €</option> 			 					<option value="1000">1.000 €</option> 			 					<option value="1200">1.200 €</option> 			 					<option value="1400">1.400 €</option> 			 					<option value="2000">2.000 €</option> 			 					<option value="100000">100.000 €</option> 			 					<option value="150000">150.000 €</option> 			 					<option value="200000">200.000 €</option> 			 					<option value="250000">250.000 €</option> 			 					<option value="300000">300.000 €</option> 			 					<option value="350000">350.000 €</option> 			 					<option value="400000">400.000 €</option> 			 					<option value="1000000">1.000.000 €</option> 			
+					</select>
+				</div>
+			</div>
+			
+			<div class="par">
+				<div class="parduo">
+					<label for="m1" class="FontBig">Metros:</label>
+					<select id="m1" name="m1">
+							<option value="0">Desde</option> 			 					<option value="12">12 m²</option> 			 					<option value="15">15 m²</option> 			 					<option value="20">20 m²</option> 			 					<option value="40">40 m²</option> 			 					<option value="50">50 m²</option> 			 					<option value="60">60 m²</option> 			 					<option value="70">70 m²</option> 			 					<option value="80">80 m²</option> 			 					<option value="90">90 m²</option> 			 					<option value="100">100 m²</option> 			 					<option value="110">110 m²</option> 			 					<option value="120">120 m²</option> 			 					<option value="130">130 m²</option> 			 					<option value="140">140 m²</option> 			 					<option value="150">150 m²</option> 			 					<option value="200">200 m²</option> 			 					<option value="1000">1.000 m²</option> 			 					<option value="2000">2.000 m²</option> 			 					<option value="3000">3.000 m²</option> 			 					<option value="4000">4.000 m²</option> 			 					<option value="10000">10.000 m²</option> 			
+					</select>
+				</div>
+				  
+				<div class="parduo">
+					<label for="m2" class="FontBig">... hasta</label>
+					<select id="m2" name="m2">
+							<option value="0">Hasta</option> 			 					<option value="12">12 m²</option> 			 					<option value="15">15 m²</option> 			 					<option value="20">20 m²</option> 			 					<option value="40">40 m²</option> 			 					<option value="50">50 m²</option> 			 					<option value="60">60 m²</option> 			 					<option value="70">70 m²</option> 			 					<option value="80">80 m²</option> 			 					<option value="90">90 m²</option> 			 					<option value="100">100 m²</option> 			 					<option value="110">110 m²</option> 			 					<option value="120">120 m²</option> 			 					<option value="130">130 m²</option> 			 					<option value="140">140 m²</option> 			 					<option value="150">150 m²</option> 			 					<option value="200">200 m²</option> 			 					<option value="1000">1.000 m²</option> 			 					<option value="2000">2.000 m²</option> 			 					<option value="3000">3.000 m²</option> 			 					<option value="4000">4.000 m²</option> 			 					<option value="10000">10.000 m²</option> 			
+					</select>
+				</div>
+			</div>
+			
+			
+			<div data-role="fieldcontain">
+				<label for="parBotoneslistado" data-inline="true">Buscar:</label>
+				<fieldset class="ui-grid-a" id="parBotoneslistado" data-inline="true">
+					<div class="ui-block-a">
+						<input type="submit" value="Buscar inmuebles" id="btnBuscarOfertas" name="btnBuscar" data-role="button" data-theme="e" data-inline="true">
+					</div>
+					<!--<div class="ui-block-b">
+						<input type="submit" value="Buscar interesados" id="btnBuscarDemandas" name="btnBuscar"data-role="button" data-inline="true">
+					</div>-->
+				</fieldset>
+			</div>		
+		</form>
+	</div>
+	<div data-role="footer" >
+		<h1 id="jqm-logo"><img src="http://www.tucasa.com/img/logo-tucasa-detalle.jpg" alt="jQuery Mobile Framework" /></h1> 
+	</div>	
+	
+</div><!-- /page -->
+	
+<div data-role="page" id="detalle"> 
+ 
+	<div data-role="header" data-theme="b"> 
+		<h1>Seleccione provincia</h1> 
+		<a href="/m/m.htm" data-icon="home" data-iconpos="notext" data-direction="reverse" class="ui-btn-right jqm-home">Home</a> 
+	</div><!-- /header --> 
+ 
+	<div data-role="content"> 
+		<a href="/m/m.htm" onclick="{alert('Gracias por pinchar');alert('hola');alert('Ejemplo de alerta con JavaScript');
+					var myselect = jQuery('#v');
+					myselect.selectedIndex = 7;
+					
+					alert('myselect.selectedIndex = ' + myselect.selectedIndex + 'y jQuery....' +jQuery('select#v'))};"><h3>click</h3></a></li> 
+		<ul data-role="listview"> 
+			<li><a href="/m/m.htm" onclick="{alert('Gracias por pinchar');
+				    alert('Ejemplo de alerta con JavaScript');
+					var myselect = jQuery('select#v');
+					myselect.selectedIndex = 3;
+					myselect.selectmenu('refresh');};" data-direction="reverse">
+					<h3>Viviendas</h3></a></li> 
+			<li><a href="/m/m.htm" data-direction="reverse" data-transition="slide"><h3>Casas y Chalets</h3></a></li> 
+			<li><a href="/m/m.htm" data-direction="reverse" data-transition="slide"><h3>Pisos y Apartamentos</h3></a></li> 
+			<li><a href="/m/m.htm" data-direction="reverse" data-transition="slide"><h3>Áticos</h3></a></li> 
+			<li><a href="/m/m.htm" data-direction="reverse" data-transition="slide"><h3>Dúplex</h3></a></li> 
+			<li><a href="/m/m.htm" data-direction="reverse" data-transition="slide"><h3>Estudios y Lofts</h3></a></li> 
+			<li><a href="/m/m.htm" data-direction="reverse" data-transition="slide"><h3>Viviendas planta baja</h3></a></li> 
+			<li><a href="/m/m.htm" data-direction="reverse" data-transition="slide"><h3>Obra Nueva</h3></a></li> 
+			<li><a href="/m/m.htm" data-direction="reverse" data-transition="slide"><h3>Oficinas</h3></a></li> 
+			<li><a href="/m/m.htm" data-direction="reverse" data-transition="slide"><h3>Locales comerciales</h3></a></li> 
+			<li><a href="/m/m.htm" data-direction="reverse" data-transition="slide"><h3>Garajes</h3></a></li> 
+			<li><a href="/m/m.htm" data-direction="reverse" data-transition="slide"><h3>Terrenos</h3></a></li> 
+			<li><a href="/m/m.htm" data-direction="reverse" data-transition="slide"><h3>Naves</h3></a></li> 
+			<li><a href="/m/m.htm" data-direction="reverse" data-transition="slide"><h3>Trasteros</h3></a></li> 	
+		</ul> 
+ 
+ 
+	</div><!-- /content --> 
+</div><!-- /page --> 	
+</body> 
+</html> 

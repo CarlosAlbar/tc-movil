@@ -1,0 +1,503 @@
+<html>
+<head>
+<title>Prueba</title>
+    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script> 
+
+    <link rel="stylesheet"  href="http://code.jquery.com/mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.css" /> 
+	<script type="text/javascript" src="http://code.jquery.com/mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.js"></script> 
+
+
+<script type="text/javascript">
+    function formatNmb(nNmb) {
+        var sRes = "";
+        nNmb = nNmb.substring(0, nNmb.indexOf('.'))
+        for (var j, i = nNmb.length - 1, j = 0; i >= 0; i--, j++)
+            sRes = nNmb.charAt(i) + ((j > 0) && (j % 3 == 0) ? "." : "") + sRes;
+        return sRes;
+    }
+
+    function formatDate(input) {
+        input = input.replace('T', '/');
+        var datePart = input.match(/\d+/g);
+        var year = datePart[0];
+        var month = datePart[1];
+        var day = datePart[2];
+        var hour = datePart[3];
+        var minute = datePart[4];
+        hoy = new Date();
+        
+        if (hoy.getDate() == day && hoy.getMonth() + 1 == month && hoy.getFullYear() == year) {
+            return 'Hoy ' + hour + ':' + minute;
+        }
+        else if (hoy.getDate() -1 == day && hoy.getMonth() + 1 == month && hoy.getFullYear() == year) {
+            return 'Ayer ' + hour + ':' + minute;        
+        }
+        else {
+            return day + '/' + month + '/' + year + ' ' + hour + ':' + minute;
+        }
+    }
+
+    function getParameter(parameterName) {
+        var queryString = window.location.search.substring(1).toLowerCase();
+        //alert(queryString);
+        //alert(document.location.href);
+        //if (queryString.length==0) {return "null";}
+        var parameters = new Array();
+        parameters = queryString.split('&');
+        for (var i = 0; i < parameters.length; i++) {
+            //alert(parameters[i]);
+            //alert(parameters[i].indexOf(parameterName));
+            if (parameters[i].indexOf(parameterName.toLowerCase()) >= 0) {
+                //alert(parameters[i]);
+                var parameterValue = new Array();
+                parameterValue = parameters[i].split('=');
+                return parameterValue[1];
+            }
+        }
+        return null;
+    }
+ 
+    // TOMA VARIABLES DE LA URL DEL HTML
+    var strQueryString = "";
+    var hasQueryString = document.URL.indexOf('?');
+    if (hasQueryString != -1) {
+        strQueryString = document.URL.substring(hasQueryString + 1, document.URL.length);
+    }
+
+    strQueryString = strQueryString.replace(' ', '');
+    //var Variables = strQueryString.split("&");
+    //alert(Variables[1]);
+    //alert('/resultadosMobile.asp?' + strQueryString);
+
+    $(document).ready(function() {
+        // show
+        $.mobile.pageLoading();
+
+
+        $.get('/m/resultadosMobile.asp?' + strQueryString, function(xml) {
+
+            var numeroinmuebles = $(xml).find('numeroinmuebles').text();
+            var nombrezonainmuebles = $(xml).find('nombrezonainmuebles').text();
+            nombrezonainmuebles = nombrezonainmuebles.charAt(0).toUpperCase() + nombrezonainmuebles.slice(1);
+            var gestioninmuebles = $(xml).find('gestioninmuebles').text();
+            gestioninmuebles = gestioninmuebles.charAt(0).toUpperCase() + gestioninmuebles.slice(1);
+            var tipoinmuebles = $(xml).find('tipoinmuebles').text();
+            tipoinmuebles = tipoinmuebles.charAt(0).toUpperCase() + tipoinmuebles.slice(1);
+            var queryinmuebles = $(xml).find('queryinmuebles').text();
+            var topinmuebles = $(xml).find('topinmuebles').text();
+
+            if (queryinmuebles == '') {
+                var cabecera = gestioninmuebles + ' de ' + tipoinmuebles + ' en ' + nombrezonainmuebles;
+            }
+            else {
+                var cabecera = 'Resultados para la búsqueda: ' + queryinmuebles;
+            }
+
+
+            var resultados = '<li><h3>' + cabecera + ' - ' + numeroinmuebles + ' resultados</h3></li>';
+
+            $(xml).find('INMUEBLE').each(function() {
+                var idinmueble = $(this).find('idinmueble').text();
+                var titulo = $(this).find('titulo').text();
+                var operacioninmueble = $(this).find('operacioninmueble').text();
+                var TipoInmueble = $(this).find('TipoInmueble').text();
+                var textoinmueble = $(this).find('textoinmueble').text();
+                var metrosconstruidosinmueble = $(this).find('metrosconstruidosinmueble').text();
+                var DormitoriosInmueble = $(this).find('DormitoriosInmueble').text();
+                var FechaOrdenacionInmueble = $(this).find('FechaOrdenacionInmueble').text();
+                var eurosinmueble = $(this).find('eurosinmueble').text();
+                var urlimagen = $(this).find('urlimagen').text();
+                var imagenprincipal = $(this).find('imagenprincipal').text();
+                var comentarioinmueble = $(this).find('comentarioinmueble').text();
+
+                //RESULTADOS CON URL REAL resultados = resultados + '<li><a href="/mobile/?i=&id=' + idinmueble + '" rel="external" data-transition="slide"><img src="' + urlimagen + ' " /><h3>' + titulo + '</h3><p>' + textoinmueble + '</p><p class="ui-li-aside"><strong>' + formatNmb(eurosinmueble) + ' €</p><p class="">' + formatDate(FechaOrdenacionInmueble) + ' ' + metrosconstruidosinmueble + ' m<sup>2 </sup>' + DormitoriosInmueble + ' Dorm. </strong></p></a></li>';                //alert(resultados);
+                //resultados = resultados + '<li class="elemento"><a href="/mobile/?i=&id=' + idinmueble + '" rel="external" data-transition="slide"><img src="http://desarrollo.tucasa.com/cacheimg/small/' + imagenprincipal.substr(imagenprincipal.length - 2, 2) + '/' + imagenprincipal + '.jpg" /><h3>' + titulo + '</h3><p>' + operacioninmueble + ' de ' + TipoInmueble + textoinmueble + '</p><p class="ui-li-aside"><strong>' + formatNmb(eurosinmueble) + ' €</p><p class="">' + formatDate(FechaOrdenacionInmueble) + ' ' + metrosconstruidosinmueble + ' m<sup>2 </sup>' + DormitoriosInmueble + ' Dorm. </strong></p></a></li>';                //alert(resultados);
+				resultados = resultados + '<li><a fecha="' + FechaOrdenacionInmueble +'" dorm="'+ DormitoriosInmueble +'" metros="' + metrosconstruidosinmueble + '" id="'+idinmueble+'" class="elemento" href="#detalle"><img src="http://desarrollo.tucasa.com/cacheimg/small/' + imagenprincipal.substr(imagenprincipal.length - 2, 2) + '/' + imagenprincipal + '.jpg" /><h3 class="title">' + titulo + '</h3><p class="text">' + operacioninmueble + ' de ' + TipoInmueble + textoinmueble + '</p><p class="precio ui-li-aside"><strong>' + formatNmb(eurosinmueble) + ' €</p><p>' + formatDate(FechaOrdenacionInmueble) + ' ' + metrosconstruidosinmueble + ' m<sup>2 </sup>' + DormitoriosInmueble + ' Dorm. </strong></p></a></li>';                //alert(resultados);
+            });
+
+            // hide
+            $.mobile.pageLoading(true);
+
+            $('#listado').html(resultados);
+            $('ul').listview('refresh');
+
+            /* PAGINACION */
+            //var queryamano = window.location.protocol + "//" + window.location.host + window.location.pathname;
+            //alert(queryamano);
+
+            var ges = getParameter('ges');
+            //if (ges != null) { queryamano = queryamano + 'ges=' + ges; }
+            var idt = getParameter('idt');
+            //if (idt != null) { queryamano = queryamano + '&idt=' + idt; }
+            var idz = getParameter('idz');
+            //if (idz != null) { queryamano = queryamano + '&idz=' + idz; }
+            var p1 = getParameter('p1');
+            //if (p1 != null) { queryamano = queryamano + '&p1=' + p1; }
+            var p2 = getParameter('p2');
+            //if (p2 != null) { queryamano = queryamano + '&p2=' + p2; }
+            var m1 = getParameter('m1');
+            //if (m1 != null) { queryamano = queryamano + '&m1=' + m1; }
+            var m2 = getParameter('m2');
+            //if (m2 != null) { queryamano = queryamano + '&m2=' + m2; }
+            var d1 = getParameter('d1');
+            //if (d1 != null) { queryamano = queryamano + '&d1=' + d1; }
+            var d2 = getParameter('d2');
+            //if (d2 != null) { queryamano = queryamano + '&d2=' + d2; }
+            var b = getParameter('b');
+            //if (b != null) { queryamano = queryamano + '&b=' + b; }
+            var gar = getParameter('gar');
+            //if (gar != null) { queryamano = queryamano + '&gar=' + gar; }
+            var pis = getParameter('pis');
+            //if (pis != null) { queryamano = queryamano + '&pis=' + pis; }
+            var top = getParameter('top');
+            if (top == null) { top = 20; } //VALOR POR DEFECTO SQL, NO EN QUERY
+            var pgn = getParameter('pgn');
+            if (pgn == null) {
+                pgn = 1;
+            }
+            //else {
+            //    queryamano = queryamano + '&pgn=' + pgn;
+            //}
+            var o = getParameter('o');
+            //if (o != null) { queryamano = queryamano + '&o=' + o; }
+            var cli = getParameter('cli');
+            //if (cli != null) { queryamano = queryamano + '&cli=' + cli; }
+            var idp = getParameter('idp');
+            //if (idp != null) { queryamano = queryamano + '&idp=' + idp; }
+            var q = getParameter('q');
+            //if (q != null) { queryamano = queryamano + '&q=' + q; }
+
+            /* PAGINACION PORTAL */
+            /*var TextoPaginacion = '';
+            var Paginacion = 20;
+            var NumeroEnlaces = 5;
+            var TotalPaginas = numeroinmuebles;
+            var TotalPaginas = parseInt((TotalPaginas / Paginacion) + 0.5);
+            var Inicio = parseInt(pgn - (NumeroEnlaces / 2));
+            if (Inicio < 1) { Inicio = 1; }
+            var Fin = Inicio + NumeroEnlaces;
+            
+            
+            if (Fin > TotalPaginas) { Fin = TotalPaginas; }
+            if (Fin - Inicio < NumeroEnlaces) { Inicio = Fin - NumeroEnlaces; }
+            if (Inicio < 1) { Inicio = 1; }
+            if (parseInt(pgn) > 1) { TextoPaginacion = TextoPaginacion + '<a href="&amp;pgn=' + (pgn - 1) + '">Anterior</a>'; }
+            if (Inicio > 1) { TextoPaginacion = TextoPaginacion & '<a href=" &amp;pgn=' + (Inicio - 1) + '">...</a> | '; }
+
+            var i = 0;
+            
+            for (i = parseInt(Inicio); i <= parseInt(Fin); i++) {
+                if (i == pgn) {
+                    TextoPaginacion = TextoPaginacion + '<strong>' + i + '</strong> | ';                    
+                }
+                else {
+                    TextoPaginacion = TextoPaginacion + '<a href="&amp;pgn=">' + i + '</a> | ';
+                }
+            }
+
+            if (Fin + Paginacion < TotalPaginas) { TextoPaginacion = TextoPaginacion + '<a href="&amp;pgn=' + (Fin + 1) + '">...</a> |'; }
+            
+            if (parseInt(pgn) < TotalPaginas) { TextoPaginacion = TextoPaginacion + '<a href="&amp;pgn=' + (Pagina + 1) + '">Siguiente</a> | '; }
+            alert(TextoPaginacion);            
+            */
+            
+            /* PAGINACION A 7 */
+            var numerobotones = 7;
+            if (numeroinmuebles % top != 0) {
+                var numeropaginas = parseInt(numeroinmuebles / top) + 1;
+            }
+            else {
+                var numeropaginas = parseInt(numeroinmuebles / top);
+            }
+
+            //SI DEBE, SE HACE VISIBLE BOTONERA
+            if (numeroinmuebles > top) { $("#botonera").css("display", "block"); }
+            $("#boton4").html('<span class="ui-btn-inner"><span class="ui-btn-text">' + pgn + '</span></span>');
+            
+            //SI DEBE, PINTA BOTON1 "<"
+            if(pgn > 1) {
+                $("#boton1").html('<span class="ui-btn-inner ui-corner-left"><span class="ui-btn-text">&nbsp;</span><span class="ui-icon ui-icon-arrow-l ui-icon-shadow">' + (parseInt(pgn) - 1).toString() + '</span></span>');
+                $("#boton1").attr('href', window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + strQueryString.replace('&pgn=' + pgn, '') + '&pgn=' + (parseInt(pgn) - 1).toString());
+            }
+            else {
+                $("#boton1").css("display", "none");
+                $('#boton1').remove();
+            }
+
+            //SI DEBE, PINTA BOTON2 "<X"
+            if (pgn - 2 >= 1) {
+                //$("#boton2").html('<span class="ui-btn-inner ui-corner-left"><span class="ui-btn-text">&nbsp;</span><span class="ui-icon ui-icon-arrow-l ui-icon-shadow">' + (parseInt(pgn) - 2) + '</span></span>');
+                $("#boton2").html('<span class="ui-btn-inner"><span class="ui-btn-text">' + (parseInt(pgn) - 2) + '</span></span>');
+                $("#boton2").attr('href', window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + strQueryString.replace('&pgn=' + pgn, '') + '&pgn=' + (parseInt(pgn) - 2));
+            }
+            else {
+                $("#boton2").css("display", "none");
+                $('#boton2').remove();
+            }
+            
+            //SI DEBE, PINTA BOTON3 "<XX"
+            if (pgn - 1 >= 1) {
+                $("#boton3").html('<span class="ui-btn-inner"><span class="ui-btn-text">' + (parseInt(pgn) - 1) + '</span></span>');
+                $("#boton3").attr('href', window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + strQueryString.replace('&pgn=' + pgn, '') + '&pgn=' + (parseInt(pgn) - 1));
+            }
+            else {
+                $("#boton3").css("display", "none");
+                $('#boton3').remove();
+            }
+
+
+            //SI DEBE, PINTA BOTON7 ">"
+            if (pgn*top > numeroinmuebles) {
+                $("#boton7").css("display", "none");
+                $('#boton7').remove();
+            }
+            else {
+                $("#boton7").html('<span class="ui-btn-inner ui-corner-right"><span class="ui-btn-text">&nbsp;</span><span class="ui-icon ui-icon-arrow-r ui-icon-shadow">' + (pgn + 1) + '</span></span>');
+                $("#boton7").attr('href', window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + strQueryString.replace('&pgn=' + parseInt(pgn), '') + '&pgn=' + (parseInt(pgn) + 1));
+            }
+
+            //SI DEBE, PINTA BOTON6 "X>"
+            if ((parseInt(pgn) + 1) * top >= numeroinmuebles) {
+                $("#boton6").css("display", "none");
+                $('#boton6').remove();
+            }
+            else {
+                $("#boton6").html('<span class="ui-btn-inner"><span class="ui-btn-text">' + (parseInt(pgn) + 2).toString() + '</span></span>');
+                $("#boton6").attr('href', window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + strQueryString.replace('&pgn=' + pgn, '') + '&pgn=' + (parseInt(pgn) + 2));
+            }
+
+
+            //SI DEBE, PINTA BOTON5 "XX>"
+            if (pgn * top > numeroinmuebles) {
+                $("#boton5").css("display", "none");
+                $('#boton5').remove();
+            }
+            else {
+                $("#boton5").html('<span class="ui-btn-inner"><span class="ui-btn-text">' + (parseInt(pgn) + 1).toString() + '</span></span>');
+                $("#boton5").attr('href', window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + strQueryString.replace('&pgn=' + parseInt(pgn), '') + '&pgn=' + (parseInt(pgn) + 1));
+            }
+
+//            alert('ppp');
+
+/*
+            //SI DEBE, PINTA BOTON7 ">"
+            if (pgn == numeropaginas) {
+                $("#boton7").css("display", "none");
+            }
+            else {
+                $("#boton7").html('<span class="ui-btn-inner ui-corner-right"><span class="ui-btn-text">&nbsp;</span><span class="ui-icon ui-icon-arrow-r ui-icon-shadow"></span></span>');
+                $("#boton7").attr('href', window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + strQueryString + '&pgn=');
+            }
+
+*/
+            /*
+
+            var i = parseInt(pgn);
+            for (i = parseInt(pgn) - 2; i <= parseInt(pgn) + 2; i++) {
+            if(numeroinmuebles> pgn * top && numeroinmuebles > ((parseInt(pgn)+1) * top) {)
+                
+                
+            }
+            */
+
+            //alert(numeroinmuebles);
+            //alert(pgn * top);
+
+            /*
+            if (numeroinmuebles > pgn * top && numeroinmuebles > ((parseInt(pgn)+1) * top) {
+            //PINTA BOTON4
+            //PINTA BOTON5
+            //PINTA BOTON6
+            }
+            else if(numeroinmuebles > pgn * top) {
+                
+                
+            
+            }
+            
+
+
+            
+            ///
+
+
+            if (numeroinmuebles > pgn * top) {
+            var pgnposterior1 = parseInt(pgn) + 1;
+            var pgnposterior2 = parseInt(pgn) + 2;
+
+
+
+
+
+
+
+
+                if (strQueryString.indexOf('pgn=') != -1) {
+            var enlaceposterior = window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + strQueryString.replace('pgn=' + pgn, 'pgn=' + pgnposterior);
+            }
+            else {
+
+                    var enlaceposterior = window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + strQueryString + '&pgn=' + pgn;
+            }
+
+                var enlaceposterior = window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + strQueryString.replace('pgn=' + pgn, 'pgn=' + pgnposterior);
+            $("#boton4").html('<span class="ui-btn-inner"><span class="ui-btn-text">' + pgnposterior + '</span></span>');
+            $("#boton4").attr('href', enlaceposterior);
+            //$("#boton5").html('<span class="ui-btn-inner"><span class="ui-icon ui-icon-arrow-r ui-icon-shadow">&nbsp;</span></span>');
+            $("#boton7").html('<span class="ui-btn-inner ui-corner-right"><span class="ui-btn-text">&nbsp;</span><span class="ui-icon ui-icon-arrow-r ui-icon-shadow"></span></span>');
+            $("#boton7").attr('href', enlaceposterior);
+
+
+            }
+            else {
+            $("#boton4").css("display", "none");
+            $("#boton7").css("display", "none");
+            }
+
+
+
+            if (pgn - 1 >= 1) {
+            var pgnanterior1 = parseInt(pgn) - 1;
+            var pgnanterior1 = parseInt(pgn) - 2;
+
+
+                //var enlaceanterior = queryamano + '&pgn=' + pgnanterior;
+            if (strQueryString.indexOf('pgn=') != -1) {
+            var enlaceanterior = window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + strQueryString.replace('pgn=' + pgn, 'pgn=' + pgnanterior);
+            }
+            else {
+            var enlaceanterior = window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + strQueryString + '&pgn=' + pgn;
+
+                }
+
+                //$("#boton2").text(pgnanterior);
+            $("#boton2").html('<span class="ui-btn-inner"><span class="ui-btn-text">' + pgnanterior + '</span></span>');
+            $("#boton2").attr('href', enlaceanterior);
+            //$("#boton1").text(pgnanterior);
+            $("#boton1").html('<span class="ui-btn-inner ui-corner-left"><span class="ui-btn-text">&nbsp;</span><span class="ui-icon ui-icon-arrow-l ui-icon-shadow"></span></span>');
+            $("#boton1").attr('href', enlaceanterior);
+            }
+            else {
+            $("#boton1").css("display", "none");
+            $("#boton2").css("display", "none");
+            }
+
+
+            // PAGINACION
+            */
+
+        })//;
+
+        .error(function() {
+            alert("Se ha producido un error en la búsqueda.");
+            //$('#listado').html('<div><h3>Se ha producido un error en la búsqueda.</h3><br><a href="/m/m.htm" data-direction="reverse" class="ui-btn-right jqm-home">Volver</a></div>');
+            $.mobile.pageLoading(true);
+            //var previousPage = $.mobile.activePage.data('ui.prevPage');
+            $.mobile.changePage('/m/m.htm', 'slide', true, true);
+        });
+		
+		//GENERACIÓN DEL DETALLE
+		$('.elemento').live('click',function(){
+
+			var ti = $(this).html();		
+			var img= $(this).find('img').attr('src')
+			var title = $(this).find('.title').html();
+			var txt = $(this).find('.text').html();
+			var precio = $(this).find('.precio').html();
+			var fecha = formatDate($(this).attr('fecha'));
+			var metros = $(this).attr('metros');
+			var dormitorios = $(this).attr('dorm');
+			var idInmueble= $(this).attr('id');
+			$('#imgPrincipal').attr('src',img);
+			$('.texto').html(title + "<br/>" +txt);
+			$('.precio').html(precio);
+			$('.metros').html(metros);
+			$('.dorm').html(dormitorios);
+			
+			$('.fecha').html(fecha);
+			
+			$('.enlaceSolicitud').attr('href','/m/solicitudmobile.htm?idinmueble='+idInmueble);
+		
+			$.post('/m/getFotos.asp',{idInmueble:idInmueble},function(data){$('#fotos-inmueble').append(data);},'text');
+		});
+
+    });
+ 
+</script>
+
+
+</head>
+ 
+<body>
+
+<div data-role="page" id="resultados"> 	
+
+
+	<div data-role="header" data-theme="b">
+		<h1>Resultados</h1> 
+		<a href="/m/m3.htm" data-icon="home" data-iconpos="notext" data-direction="reverse" class="ui-btn-right jqm-home">Inicio</a>
+	</div>	
+
+	<div data-role="content"> 
+			<ul data-role="listview" id="listado"> 
+            </ul>
+            <br />
+            <div id="botonera" data-role="controlgroup" data-type="horizontal" style="text-align:center;display:none;">
+                <a href="index.html" data-role="button" data-icon="arrow-l" id="boton1" style="" rel="external">&nbsp;</a>
+                <a href="index.html" data-role="button" id="boton2" style="" rel="external">x</a>
+                <a href="index.html" data-role="button" id="boton3" style="" rel="external">x</a>
+                <a href="" data-role="button" data-theme="b" id="boton4" style="" rel="external">x</a>
+                <a href="index.html" data-role="button" id="boton5" style="" rel="external">x</a>
+                <a href="index.html" data-role="button" id="boton6" style="" rel="external">x</a>
+                <a href="index.html" data-role="button" data-icon="arrow-r" data-iconpos="right" id="boton7" style="" rel="external">&nbsp;</a>
+            </div>
+    </div>   
+</div>  
+
+<div data-role="page" id="detalle">
+<div data-role="header" data-theme="b">
+		<h1>Detalle</h1> 
+		<a href="/m/m3.htm" data-icon="home" data-iconpos="notext" data-direction="reverse" class="ui-btn-right jqm-home">Inicio</a>
+	</div>	
+<div data-role="content"> 
+		<div id="detalle_inmueble" style="text-align:left;">
+		<a href="fotos-inmueble"><img id="imgPrincipal" src="" width="128px;" style="float:left;"/></a>
+		<span style="margin-left:5px;">Precio: </span><span style="color:red;font-size:15px;" class="precio"></span><br/>
+		<span style="margin-left:5px;">Metros: </span><span style="font-size:15px;" class="metros"></span> m<sup>2</sup><br/>
+		<span style="margin-left:5px;">Dormitorios</sup>: </span><span style="font-size:15px;" class="dorm"></span><br/>
+		<span style="margin-left:5px;">Fecha</sup>: </span><span style="font-size:15px;" class="fecha"></span><br/>
+	
+		<div style="clear:both;"></div>
+		<br/>
+		<br/>
+		<span class="texto"></span>
+		<br/>
+		
+		</div>
+ 
+	</div><!-- /content --> 
+	
+<div data-role="footer" class="ui-bar" data-theme="b" data-position="fixed">
+	<a href="index.html" data-role="button" data-icon="arrow-u">Opciones</a>
+	<a class="enlaceSolicitud"href="index.html" data-role="button" data-icon="plus" rel="external">Solicitud</a>
+	<a href="#fotos-inmueble" data-role="button" data-icon="plus">Fotos</a>
+
+</div>
+	</div>
+<div data-role="page" id="fotos-inmueble"> 
+<div data-role="header" data-theme="b">
+		<h1>Imágenes</h1> 
+		<a href="/m/m3.htm" data-icon="home" data-iconpos="notext" data-direction="reverse" class="ui-btn-right jqm-home">Inicio</a>
+	</div>	
+<div data-role="footer" class="ui-bar" data-theme="b" data-position="fixed">
+	<a href="index.html" data-role="button" data-icon="arrow-u">Opciones</a>
+	<a class="enlaceSolicitud" href="index.html" data-role="button" data-icon="plus" rel="external">Solicitud</a>
+	<a href="#fotos-inmueble" data-role="button" data-icon="plus">Fotos</a>
+
+</div>
+</div><!-- /page --> 	
+
+</body>
+</html>
